@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+
+import yaml
+import argparse
+from marl.run_training_belief import training_run
+from marl.utils.args_class import Args
+from marl.environments.ma_sphinx import MaSphinx
+from marl.environments.ma_escape_room import MaEscapeRoom
+from marl.environments.ma_honeycomb import MaHoneyComb
+from marl.environments.ma_gathering import MaGathering
+
+
+def load_config(config_path):
+    with open(config_path, "r") as file:
+        config = yaml.safe_load(file)
+    return config
+
+
+def create_environment(env_config):
+    env_type = env_config.pop("type")
+
+    if env_type == "MaEscapeRoom":
+        return MaEscapeRoom(**env_config)
+    elif env_type == "MaSphinx":
+        return MaSphinx(**env_config)
+    elif env_type == "MaHoneyComb":
+        return MaHoneyComb(**env_config)
+    elif env_type == "MaGathering":
+        return MaGathering(**env_config)
+    else:
+        raise ValueError(f"Unknown environment type: {env_type}")
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Run belief model training with config file"
+    )
+    parser.add_argument(
+        "--config",
+        type=str,
+        default="configs/default_belief.yaml",
+        help="Path to the configuration YAML file",
+    )
+    parser.add_argument(
+        "--folder",
+        type=str,
+        default=None,
+        help="Parent folder within data directory to store results",
+    )
+    args_cmd = parser.parse_args()
+
+    config = load_config(args_cmd.config)
+
+    env = create_environment(config["environment"])
+
+    args = Args(**config["args"])
+
+    print("Belief model training run started with config:", args_cmd.config)
+    training_run(env=env, args=args, parent_folder=args_cmd.folder)
+
+
+if __name__ == "__main__":
+    main()

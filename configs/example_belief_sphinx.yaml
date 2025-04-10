@@ -1,0 +1,29 @@
+environment:
+  type: MaSphinx
+  num_agents: 2
+
+args:
+  agent_type: QSSBeliefVAE
+  seed: 42
+  obs_shape: [1, 4]
+  state_shape: [1, 4]
+  state_shape_unobserved: [1, 2]
+  hidden_dim: 64
+  latent_dim: 4
+  num_belief_samples: 2
+  belief_dim: 4 # Keep same as unobserved part
+  belief_temperature: 0.5
+  num_actions: 9
+  num_agents: 2
+  q_lr: 0.001
+  belief_lr: 0.001
+  tau: 0.005
+  episodes: 10000
+  memory_length: 10000
+  gamma: 0.99
+  max_steps_per_episode: 40
+  batch_size: 128
+  epsilon: 0.6 
+  qss_lr: 0.001
+  f_lr: 0.001
+  lambda_f: 0.1
